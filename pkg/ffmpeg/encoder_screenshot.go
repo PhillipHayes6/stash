@@ -18,13 +18,14 @@ func (e *Encoder) Screenshot(probeResult VideoFile, options ScreenshotOptions) e
 		options.Quality = 1
 	}
 	args := []string{
+		"-hwaccel", "cuda",
 		"-v", options.Verbosity,
 		"-ss", fmt.Sprintf("%v", options.Time),
 		"-y",
 		"-i", probeResult.Path,
 		"-vframes", "1",
 		"-q:v", fmt.Sprintf("%v", options.Quality),
-		"-vf", fmt.Sprintf("scale=%v:-1", options.Width),
+		"-vf", fmt.Sprintf("hwupload_cuda,scale_cuda=%v:-1,format=nv12", options.Width),
 		"-f", "image2",
 		options.OutputPath,
 	}

@@ -52,12 +52,13 @@ func calculateTranscodeScale(probeResult VideoFile, maxTranscodeSize models.Stre
 func (e *Encoder) Transcode(probeResult VideoFile, options TranscodeOptions) {
 	scale := calculateTranscodeScale(probeResult, options.MaxTranscodeSize)
 	args := []string{
+		"-hwaccel", "cuda",
 		"-i", probeResult.Path,
-		"-c:v", "libx264",
+		//"-c:v", "libx264",
 		"-pix_fmt", "yuv420p",
 		"-profile:v", "high",
 		"-level", "4.2",
-		"-preset", "superfast",
+		"-preset", "fast",
 		"-crf", "23",
 		"-vf", "scale=" + scale,
 		"-c:a", "aac",

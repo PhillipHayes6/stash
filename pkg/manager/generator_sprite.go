@@ -69,20 +69,17 @@ func (g *SpriteGenerator) generateSpriteImage(encoder *ffmpeg.Encoder) error {
 	}
 	logger.Infof("[generator] generating sprite image for %s", g.Info.VideoFile.Path)
 
+	options := ffmpeg.BatchScreenshotOptions{
+		OutputPath: instance.Paths.Generated.GetTmpPath("thumbnail%d.jpg"),
+		TimeStamps: make([]float64, g.Info.ChunkCount),
+		Width:      160,
+	}
 	// Create `this.chunkCount` thumbnails in the tmp directory
 	stepSize := g.Info.VideoFile.Duration / float64(g.Info.ChunkCount)
 	for i := 0; i < g.Info.ChunkCount; i++ {
-		time := float64(i) * stepSize
-		num := fmt.Sprintf("%.3d", i)
-		filename := "thumbnail" + num + ".jpg"
-
-		options := ffmpeg.ScreenshotOptions{
-			OutputPath: instance.Paths.Generated.GetTmpPath(filename),
-			Time:       time,
-			Width:      160,
-		}
-		encoder.Screenshot(g.Info.VideoFile, options)
+		options.TimeStamps[i] = float64(i) * stepSize
 	}
+	encoder.BatchScreenshot(g.Info.VideoFile, options)
 
 	// Combine all of the thumbnails into a sprite image
 	globPath := filepath.Join(instance.Paths.Generated.Tmp, "thumbnail*.jpg")

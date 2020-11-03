@@ -21,6 +21,7 @@ func (e *Encoder) ScenePreviewVideoChunk(probeResult VideoFile, options ScenePre
 
 	args := []string{
 		"-v", "error",
+		"-hwaccel", "cuda",
 	}
 
 	// Non-fallback: enable xerror.
@@ -62,7 +63,7 @@ func (e *Encoder) ScenePreviewVideoChunk(probeResult VideoFile, options ScenePre
 		"-t", strconv.FormatFloat(options.Duration, 'f', 2, 64),
 		"-max_muxing_queue_size", "1024", // https://trac.ffmpeg.org/ticket/6375
 		"-y",
-		"-c:v", "libx264",
+		// "-c:v", "h264_nvenc",
 		"-pix_fmt", "yuv420p",
 		"-profile:v", "high",
 		"-level", "4.2",
